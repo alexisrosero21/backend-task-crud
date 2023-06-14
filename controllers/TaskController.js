@@ -45,7 +45,7 @@ module.exports = {
 
   updateTask: async (req, res) => {
     try {
-      const { title, description, status, date, time, list } = req.body
+      const { title, description, status, date, time, list, user } = req.body
       const updatedTask = await TaskModel.findByIdAndUpdate(
         req.params.id,
         {
@@ -54,7 +54,8 @@ module.exports = {
           status,
           date,
           time,
-          list, // Agregar la propiedad list para actualizar la relación de lista
+          list,
+          user, // Agregar la propiedad list para actualizar la relación de lista
         },
         { new: true }
       )
@@ -69,6 +70,10 @@ module.exports = {
   deleteTask: async (req, res) => {
     try {
       const deletedTask = await TaskModel.findByIdAndDelete(req.params.id)
+      //actualiza el usuario correspondiente y elimina la tarea de su propiedad tasks
+      await ListModel.findByIdAndUpdate(deletedTask.list, {
+        $pull: { tasks: deletedTask._id },
+      })
       console.log("Tarea eliminada...")
       res.json(deletedTask)
     } catch (err) {

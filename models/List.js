@@ -5,6 +5,12 @@ const ListSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
+  img: {
+    type: String,
+    default: "https://picsum.photos/200",
+  },
+
   tasks: [
     {
       type: mongoose.Schema.Types.ObjectId,
